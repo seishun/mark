@@ -100,8 +100,8 @@ Mark.prototype.buildChain = function(length, callback){
 									if(err){
 										//TODO: handle this
 									}
-									total += ' ' + result[0].word2;
 									if(result[0].word2 !== undefined){
+									total += ' ' + result[0].word2;
 										if(result[0].word3 !== undefined){
 											total += ' ' + result[0].word3;
 										}
