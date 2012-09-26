@@ -87,7 +87,7 @@ Mark.prototype.buildChain = function(length, callback){
 					}
 				}
 				function get_words(i, words){
-					if(i>length || words.word3 === undefined || words.length === 0){
+					if(words === undefined || i > length || words.word3 === undefined || words.length === 0){
 						callback(total);
 					} else {
 						if(i != length-1){
