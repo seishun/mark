@@ -62,79 +62,91 @@ Mark.prototype.buildChain = function(length, callback){
 	var Chain = this.Chain;
 	if(length === 1){
 		Chain.count({word3: /(.*!||.*?||.*\.)$/}, function(err, result){
-			var z = Math.floor(Math.random()*result);
-			Chain.find({word3: /(.*!||.*?||.*\.)$/}, null, { skip: z, limit: 1 }, function(err, result){
-				if(err){
-					callback(err);
-				} else {
-					var total = result[0].word1 + ' ' + result[0].word2 + ' ' + result[0].word3;
-					callback(total);
-				}
-			});
+			if(result > 0){
+				var z = Math.floor(Math.random()*result);
+				Chain.find({word3: /(.*!||.*?||.*\.)$/}, null, { skip: z, limit: 1 }, function(err, result){
+					if(err){
+						callback(err);
+					} else {
+						var total = result[0].word1 + ' ' + result[0].word2 + ' ' + result[0].word3;
+						callback(total);
+					}
+				});
+			}
 		});
 	} else {
 		Chain.count({}, function(err, result){
-			var z = Math.floor(Math.random()*result);
-			Chain.find({}, null, { skip: z, limit: 1 }, function(err, result){
-				if(err){
-					//TODO: handle this
-				}
-				total = result[0].word1;
-				if(result[0].word2 !== undefined){
-					total += ' ' + result[0].word2;
-					if(result[0].word3 !== undefined){
-						total += ' ' + result[0].word3;
+			if(result > 0){
+				var z = Math.floor(Math.random()*result);
+				Chain.find({}, null, { skip: z, limit: 1 }, function(err, result){
+					if(err){
+						//TODO: handle this
 					}
-				}
-				function get_words(i, words){
-					if(words === undefined || i > length || words.word3 === undefined || words.length === 0){
-						callback(total);
-					} else {
-						if(i != length-1){
-							Chain.count({word1: words.word3}, function(err, result){
-								if(err){
-									//TODO: handle this
-								}
-								var z = Math.floor(Math.random()*result);
-								Chain.find({word1: words.word3}, null, { skip: z, limit: 1 }, function(err, result){
-									if(err){
-										//TODO: handle this
-									}
-									if(result[0] !== undefined && result[0].word2 !== undefined){
-										total += ' ' + result[0].word2;
-										if(result[0].word3 !== undefined){
-											total += ' ' + result[0].word3;
-										}
-										i++;
-									}
-									get_words(i, result[0]);
-								});
-							});
-						} else {
-							Chain.count({word1: words.word3, word3: /(.*!||.*?||.*\.)$/}, function(err, result){
-								if(err){
-									//TODO: handle this
-								}
-								var z = Math.floor(Math.random()*result);
-								Chain.find({word1: words.word3, word3: /(.*!||.*?||.*\.)$/}, null, { skip: z, limit: 1 }, function(err, result){
-									if(err){
-										//TODO: handle this
-									}
-									if(result[0] !== undefined && result[0].word2 !== undefined){
-										total += ' ' + result[0].word2;
-										if(result[0].word3 !== undefined){
-											total += ' ' + result[0].word3;
-										}
-										i++;
-									}
-									get_words(i, result[0]);
-								});
-							});
+					total = result[0].word1;
+					if(result[0].word2 !== undefined){
+						total += ' ' + result[0].word2;
+						if(result[0].word3 !== undefined){
+							total += ' ' + result[0].word3;
 						}
 					}
-				}
-				get_words(1, result[0]);
-			});
+					function get_words(i, words){
+						if(words === undefined || i > length || words.word3 === undefined || words.length === 0){
+							callback(total);
+						} else {
+							if(i != length-1){
+								Chain.count({word1: words.word3}, function(err, result){
+									if(err){
+										//TODO: handle this
+									}
+									if(result > 0){
+										var z = Math.floor(Math.random()*result);
+										Chain.find({word1: words.word3}, null, { skip: z, limit: 1 }, function(err, result){
+											if(err){
+												//TODO: handle this
+											}
+											if(result[0] !== undefined && result[0].word2 !== undefined){
+												total += ' ' + result[0].word2;
+												if(result[0].word3 !== undefined){
+													total += ' ' + result[0].word3;
+												}
+												i++;
+											}
+											get_words(i, result[0]);
+										});
+									} else {
+										get_words(i, undefined);
+									}
+								});
+							} else {
+								Chain.count({word1: words.word3, word3: /(.*!||.*?||.*\.)$/}, function(err, result){
+									if(err){
+										//TODO: handle this
+									}
+									if(result > 0){
+										var z = Math.floor(Math.random()*result);
+										Chain.find({word1: words.word3, word3: /(.*!||.*?||.*\.)$/}, null, { skip: z, limit: 1 }, function(err, result){
+											if(err){
+												//TODO: handle this
+											}
+											if(result[0] !== undefined && result[0].word2 !== undefined){
+												total += ' ' + result[0].word2;
+												if(result[0].word3 !== undefined){
+													total += ' ' + result[0].word3;
+												}
+												i++;
+											}
+											get_words(i, result[0]);
+										});
+									} else {
+										get_words(i, undefined);
+									}
+								});
+							}
+						}
+					}
+					get_words(1, result[0]);
+				});
+			}
 		});
 	}
 };
