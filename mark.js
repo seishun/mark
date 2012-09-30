@@ -17,7 +17,7 @@ Mark.prototype.addWords = function(string, callback){
 		string += '.';
 	}
 
-	var words = string.split(/[\n\r\s]+/g);
+	var words = string.split(/\s+/g);
 
 	if(words[0] === undefined){
 		return;
@@ -53,7 +53,7 @@ Mark.prototype.addWords = function(string, callback){
 		});
 	}
 
-	for(i = 0; i < len; i++){
+	for(var i = 0; i < len; i++){
 		find_or_insert(i);
 	}
 };
@@ -118,15 +118,15 @@ Mark.prototype.buildChain = function(param, callback){
 	}
 	
 	if(typeof param == "string"){
-		if(Math.random()*10 > 7){
-			var words = string.split(/[\n\r\s]+/g);
+//		if(Math.random()*10 > 7){
+			var words = param.split(/\s+/g);
 
 			if(words.length > 2){
 				var len = words.length-2;
 				var chains = [];
 
 				//create chains
-				for(i = 0; i < len; i++){
+				for(var i = 0; i < len; i++){
 				
 					chains.push({
 						word1: words[i],
@@ -138,12 +138,13 @@ Mark.prototype.buildChain = function(param, callback){
 
 				var z = Math.floor(Math.random()*chains.length);
 				var total = chains[z].word1 + ' ' + chains[z].word2 + ' ' + chains[z].word3;
-
-				get_words(Math.floor(Math.random()*10), chain[z]);
+                
+                var length = Math.floor(Math.random()*10);
+				get_words(1, chains[z]);
 			}	
-		}
+//		}
 	} else {
-		if(length === 1){
+		if(param === 1){
 			Chain.count({word3: /(.*!||.*?||.*\.)$/}, function(err, result){
 				if(result > 0){
 					var z = Math.floor(Math.random()*result);
@@ -172,6 +173,7 @@ Mark.prototype.buildChain = function(param, callback){
 								total += ' ' + result[0].word3;
 							}
 						}
+                        var length = param;
 						get_words(1, result[0]);
 					});
 				}
