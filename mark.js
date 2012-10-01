@@ -122,13 +122,13 @@ Mark.prototype.buildChain = function(param, callback){
 
 		if(words.length > 2){
 			var len = words.length-1;
-			var z = Math.floor(Math.random()*len);
+			var pos = Math.floor(Math.random()*len);
             var length = Math.floor(Math.random()*10);
             var total = '';
-			Chain.count({word1: words[z], word2: words[z+1]}, function(err, result){
+			Chain.count({word1: words[pos], word2: words[pos+1]}, function(err, result){
 				if(result > 0){
 					var z = Math.floor(Math.random()*result);
-					Chain.find({word1: words[z], word2: words[z+1]}, null, { skip: z, limit: 1 }, function(err, result){
+					Chain.find({word1: words[pos], word2: words[pos+1]}, null, { skip: z, limit: 1 }, function(err, result){
 						if(err){
 							//TODO: handle this
 						}
