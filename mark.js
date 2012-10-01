@@ -124,7 +124,7 @@ Mark.prototype.buildChain = function(param, callback){
 			var len = words.length-1;
 			var z = Math.floor(Math.random()*len);
             var length = Math.floor(Math.random()*10);
-
+            var total = '';
 			Chain.count({word1: words[z], word2: words[z+1]}, function(err, result){
 				if(result > 0){
 					var z = Math.floor(Math.random()*result);
@@ -132,7 +132,7 @@ Mark.prototype.buildChain = function(param, callback){
 						if(err){
 							//TODO: handle this
 						}
-						var total = result[0].word1;
+						total = result[0].word1;
 						if(result[0].word2 !== undefined){
 							total += ' ' + result[0].word2;
 							if(result[0].word3 !== undefined){
