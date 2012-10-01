@@ -66,13 +66,13 @@ Mark.prototype.buildChain = function(param, callback){
 			callback(total);
 		} else {
 			if(i != length-1){
-				Chain.count({word1: words.word3}, function(err, result){
+				Chain.count({word1: words.word2, word2: words.word3}, function(err, result){
 					if(err){
 						//TODO: handle this
 					}
 					if(result > 0){
 						var z = Math.floor(Math.random()*result);
-						Chain.find({word1: words.word3}, null, { skip: z, limit: 1 }, function(err, result){
+						Chain.find({word1: words.word2, word2: words.word3}, null, { skip: z, limit: 1 }, function(err, result){
 							if(err){
 								//TODO: handle this
 							}
@@ -90,13 +90,13 @@ Mark.prototype.buildChain = function(param, callback){
 					}
 				});
 			} else {
-				Chain.count({word1: words.word3, word3: /(.*!||.*?||.*\.)$/}, function(err, result){
+				Chain.count({word1: words.word2, word2: words.word3, word3: /(.*!||.*?||.*\.)$/}, function(err, result){
 					if(err){
 						//TODO: handle this
 					}
 					if(result > 0){
 						var z = Math.floor(Math.random()*result);
-						Chain.find({word1: words.word3, word3: /(.*!||.*?||.*\.)$/}, null, { skip: z, limit: 1 }, function(err, result){
+						Chain.find({word1: words.word2, word2: words.word3, word3: /(.*!||.*?||.*\.)$/}, null, { skip: z, limit: 1 }, function(err, result){
 							if(err){
 								//TODO: handle this
 							}
@@ -118,31 +118,33 @@ Mark.prototype.buildChain = function(param, callback){
 	}
 	
 	if(typeof param == "string"){
-//		if(Math.random()*10 > 7){
-			var words = param.split(/\s+/g);
+		var words = param.split(/\s+/g);
 
-			if(words.length > 2){
-				var len = words.length-2;
-				var chains = [];
+		if(words.length > 2){
+			var len = words.length-1;
+			var z = Math.floor(Math.random()*len);
+            var length = Math.floor(Math.random()*10);
 
-				//create chains
-				for(var i = 0; i < len; i++){
-				
-					chains.push({
-						word1: words[i],
-						word2: words[i+1],
-						word3: words[i+2]
+			Chain.count({word1: words[z], word2: words[z+1]}, function(err, result){
+				if(result > 0){
+					var z = Math.floor(Math.random()*result);
+					Chain.find({word1: words[z], word2: words[z+1]}, null, { skip: z, limit: 1 }, function(err, result){
+						if(err){
+							//TODO: handle this
+						}
+						var total = result[0].word1;
+						if(result[0].word2 !== undefined){
+							total += ' ' + result[0].word2;
+							if(result[0].word3 !== undefined){
+								total += ' ' + result[0].word3;
+							}
+						}
+                        var length = param;
+						get_words(1, result[0]);
 					});
-				
 				}
-
-				var z = Math.floor(Math.random()*chains.length);
-				var total = chains[z].word1 + ' ' + chains[z].word2 + ' ' + chains[z].word3;
-                
-                var length = Math.floor(Math.random()*10);
-				get_words(1, chains[z]);
-			}	
-//		}
+			});
+		}
 	} else {
 		if(param === 1){
 			Chain.count({word3: /(.*!||.*?||.*\.)$/}, function(err, result){
