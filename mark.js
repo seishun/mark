@@ -43,6 +43,11 @@ module.exports = function(mongoUri){
         }
         
         if (result === 0) {
+          failed = true;
+          callback('');
+        }
+        
+        if (failed) {
           return;
         }
         
@@ -51,8 +56,11 @@ module.exports = function(mongoUri){
             callback(err);
           }
           
+          if (failed) {
+            return;
+          }
+          
           left ? response.unshift(result.word1) : response.push(result.word3);
-//          console.log(response);
           if (left ? result.first : result.last) {
             if (halfDone) {
               callback(response.join(' '));
@@ -75,9 +83,8 @@ module.exports = function(mongoUri){
     var firstIndex = Math.floor(Math.random() * (words.length - 1));
     var response = words.slice(firstIndex, firstIndex + 2);
     
-//    console.log(response);
-    
     var halfDone = false;
+    var failed = false;
     step(true);
     step(false);
     
