@@ -32,22 +32,22 @@ module.exports = function(mongoUri){
     }
   };
 
-  this.buildChain = function(string, callback) {
-//    console.log(string);
+  this.buildChain = function(words, callback) {
     
     function step(left) {
-      var query = left ? {word2: response[0], word3: response[1]} : {word1: response[response.length-2], word2: response[response.length-1]};
+      var query = words.length < 2 ? {word2: words[0]} : left ? {word2: words[0], word3: words[1]} : {word1: words[words.length-2], word2: words[words.length-1]};
       Chain.count(query, function(err, result) {
         if (err) {
           callback(err);
         }
         
+        if (failed) {
+          return;
+        }
+        
         if (result === 0) {
           failed = true;
           callback('');
-        }
-        
-        if (failed) {
           return;
         }
         
@@ -60,10 +60,10 @@ module.exports = function(mongoUri){
             return;
           }
           
-          left ? response.unshift(result.word1) : response.push(result.word3);
+          left ? words.unshift(result.word1) : words.push(result.word3);
           if (left ? result.first : result.last) {
             if (halfDone) {
-              callback(response.join(' '));
+              callback(words.join(' '));
             } else {
               halfDone = true;
             }
@@ -73,15 +73,6 @@ module.exports = function(mongoUri){
         });
       });
     }
-    
-    var words = string.split(/\s+/);
-
-    if (words.length < 2) {
-      return;
-    }
-    
-    var firstIndex = Math.floor(Math.random() * (words.length - 1));
-    var response = words.slice(firstIndex, firstIndex + 2);
     
     var halfDone = false;
     var failed = false;
